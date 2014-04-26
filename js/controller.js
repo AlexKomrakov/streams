@@ -1,11 +1,11 @@
-var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize']);
- 
+var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate']);
+
 streamsApp.factory('Streams', ['$resource', '$sce', function($resource, $sce) {
 //	var firstChannel = rest().get();
 	function rest () {
 		return $resource('https://api.twitch.tv/kraken/streams', {}, {
-			get: {method:'JSONP', params: {game:'Dota 2', callback: 'JSON_CALLBACK'}}
-		});
+            get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK', game: 'Dota 2'}}
+        });
 	}
 	function show (channelName) {
 		if (!channelName)
@@ -19,43 +19,33 @@ streamsApp.factory('Streams', ['$resource', '$sce', function($resource, $sce) {
 }]);
 
 streamsApp.controller('streamList',['Streams', '$scope', '$interval', function(Streams, $scope, $interval) {
-	$scope.firstlist = Streams.rest().get();
-	$scope.list = Streams.rest().get();
-  	$interval(function () {
-  		$scope.list = Streams.rest().get();
-  	}, 30000);
-  	$scope.changeStream = function (channelName) {
-  		console.log(channelName);
-  		//$scope.activeStream = channelName;
-  	};
-  	//$scope.activeStream = Streams.show();
+    $scope.config = {
+        stream: '',
+        startvolume: '50'
+    }
+    $scope.list = Streams.rest().get({}, function (data) {
+        $scope.config.stream = data.streams[0];
+    });
+
+    $interval(function () {
+        console.log('updating');
+        Streams.rest().get({}, function (data) {
+            console.log('success');
+            $scope.list = data;
+        });
+    }, 60000);
 }]);
 
-streamsApp.directive('match', function() {
-  return {
-    require: 'ngModel',
-    scope: { par:'=match' },
-    link: function(scope, elm, attrs, ctrl) {
-      scope.$watch('par', function(newValue) {
-    	if (newValue == ctrl.$viewValue) {
-    		ctrl.$setValidity('pass_match', true);
-    	} else {
-    		ctrl.$setValidity('pass_match', false);
-    	}
-      });
-      ctrl.$parsers.unshift(function(viewValue) { 
-    	if (scope.par == ctrl.$viewValue) {
-    		ctrl.$setValidity('pass_match', true);
-    		return viewValue;
-    	} else {
-    		ctrl.$setValidity('pass_match', false);
-    		return viewValue;
-    	}
-	  });
+streamsApp.directive('stream', function () {
+    //var startVolume = 25;  //Убрать или нет???
+    return {
+        restrict: 'E',
+        scope: {
+            config: '=config'
+        },
+        template: '<object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{config.stream.channel.name}}" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={{config.stream.channel.name}}&auto_play=true&start_volume={{startvolume}}" /></object>'
     }
-  };
 });
-
 
 
 // streamsApp.directive('match', function() {

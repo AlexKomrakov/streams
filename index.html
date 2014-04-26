@@ -46,23 +46,9 @@
 
     <div class="bs-docs-featurette">
       <div class="container"> <!--  ng-bind-html="activeStream" -->
+          <stream ng-if="config.stream != ''" config="config"></stream>
 
-        <form name="myForm">
-          <div class="form-group" ng-class="{'has-success': myForm.first_input.$valid==true}">
-            <input class="form-control" type="text" name="first_input" ng-model="first" required></input>
-          </div>
-          <div class="form-group" ng-class="{'has-success': myForm.second_input.$valid==true}">
-            <input class="form-control" type="text" name="second_input" ng-model="second" match="first" ></input>
-          </div>
-        </form>
-        Form validity: {{myForm.$valid}} <br/>
-        {{myForm.first_input.$valid}}
-        {{myForm.second_input.$valid}}
-        {{myForm.second_input.$error}}
-        {{second}}{{first}}
-
-
-        <!-- <object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{activeStream}}" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={{activeStream}}&auto_play=true&start_volume=25" /></object> -->
+          <!-- <object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{activeStream}}" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={{activeStream}}&auto_play=true&start_volume=25" /></object> -->
       </div>
     </div>
 
@@ -75,7 +61,7 @@
 
           <ul class="media-list">
             <li class="media" ng-repeat="stream in list.streams">
-              <a class="pull-left" href="#" ng-click="activeStream = 'dsa'">
+                <a class="pull-left" href="#" ng-click="config.stream = stream">
                 <img class="media-object" ng-src="{{stream.preview.medium}}" />
               </a>
               <div class="media-body">
