@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="shortcut icon" href="../../assets/ico/favicon.ico"> -->
+
+    <title>Dota streams</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-sanitize.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-animate.min.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/holder.js"></script>
+  </head>
+
+  <body ng-app="dotaStreams" ng-controller="streamList" ng-model="activeStream">
+
+    <!-- Static navbar -->
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Dota streams</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="bs-docs-featurette">
+      <div class="container"> <!--  ng-bind-html="activeStream" -->
+
+        <form name="myForm">
+          <div class="form-group" ng-class="{'has-success': myForm.first_input.$valid==true}">
+            <input class="form-control" type="text" name="first_input" ng-model="first" required></input>
+          </div>
+          <div class="form-group" ng-class="{'has-success': myForm.second_input.$valid==true}">
+            <input class="form-control" type="text" name="second_input" ng-model="second" match="first" ></input>
+          </div>
+        </form>
+        Form validity: {{myForm.$valid}} <br/>
+        {{myForm.first_input.$valid}}
+        {{myForm.second_input.$valid}}
+        {{myForm.second_input.$error}}
+        {{second}}{{first}}
+
+
+        <!-- <object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{activeStream}}" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={{activeStream}}&auto_play=true&start_volume=25" /></object> -->
+      </div>
+    </div>
+
+    <div class="bs-docs-featurette">
+      <div class="container">
+        <h2 class="bs-docs-featurette-title">Stream list</h2>
+        <div class="row">
+
+          </div>
+
+          <ul class="media-list">
+            <li class="media" ng-repeat="stream in list.streams">
+              <a class="pull-left" href="#" ng-click="activeStream = 'dsa'">
+                <img class="media-object" ng-src="{{stream.preview.medium}}" />
+              </a>
+              <div class="media-body">
+                <h3 class="media-heading">{{stream.channel.display_name}}</h3>
+                <p>{{stream.channel.status}}</p>
+                <p><span style="color:#5bc0de">{{stream.viewers}} viewers</span></p>
+              </div>
+
+            </li>
+          </ul>
+
+      </div>
+    </div>
+	
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
