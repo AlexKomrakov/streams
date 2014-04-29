@@ -1,34 +1,42 @@
 var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate']);
 
-streamsApp.factory('Streams', ['$resource', '$sce', function ($resource, $sce) {
-    function rest() {
-        return $resource('https://api.twitch.tv/kraken/streams', {}, {
+streamsApp.service('Twitch', function ($resource) {
+    var streams = [];
+    this.getStreams = function () {
+        return streams;
+    }
+    this.updatestreams = function () {
+        var query = $resource('https://api.twitch.tv/kraken/streams', {}, {
             get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK', game: 'Dota 2'}}
+        });
+        query.get().$promise.then(function (result) {
+            streams.length = 0;
+            //console.log(result);
+            for (var i = 0; i < result.streams.length; i++) {
+                streams.push(result.streams[i]);
+            }
         });
     }
 
-    return {
-        rest: rest
-    };
-}]);
+});
 
-streamsApp.controller('streamList', ['Streams', '$scope', '$interval', function (Streams, $scope, $interval) {
+streamsApp.controller('streamList', function (Twitch, $scope, $interval) {
     $scope.config = {
         stream: '',
         startvolume: '50'
-    }
-    $scope.list = Streams.rest().get({}, function (data) {
-        $scope.config.stream = data.streams[0];
-    });
-
+    };
+    Twitch.updatestreams();
+    $scope.list = Twitch.getStreams();
+    //Twitch.updatestreams();
     $interval(function () {
-        console.log('updating');
-        Streams.rest().get({}, function (data) {
-            console.log('success');
-            $scope.list = data;
-        });
-    }, 60000);
-}]);
+        Twitch.updatestreams();
+        //console.log($scope.list);
+    }, 5 * 1000);
+});
+
+streamsApp.controller('games', function (Twitch, $scope) {
+
+});
 
 streamsApp.directive('stream', function () {
     //var startVolume = 25;  //Убрать или нет???
