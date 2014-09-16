@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!--<link rel="shortcut icon" href="../../assets/ico/favicon.ico"> -->
+
+        <title>Dota streams</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="css/bootstrap.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular-sanitize.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular-animate.min.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="js/holder.js"></script>
+    </head>
+
+    <body ng-app="dotaStreams" ng-controller="streamList" ng-model="activeStream">
+    <div class="bs-docs-featurette" style="background-color: #000000">
+        <div class="container">
+            <stream ng-if="config.stream != ''" config="config"></stream>
+        </div>
+    </div>
+
+    <br>
+    <div class="text-center" ng-repeat="game in gamesContainer.games">
+        <div ng-if="game.league_tier > 1">
+            <span style="color: #d9534f;"><b>LIVE</b></span>
+            {{game.radiant_team.team_name}} <b>{{game.scoreboard.radiant.score}}</b> vs <b>{{game.scoreboard.dire.score}}</b> {{game.dire_team.team_name}}
+            {{game.scoreboard.duration*1000 | date : 'H:mm:ss' : 'UTC' }}
+            ({{game.radiant_series_wins}}:{{game.dire_series_wins}})
+        </div>
+    </div>
+    <br>
+
+    <div ng-if="streamsContainer.streams[0] != null" class="bs-docs-featurette">
+        <div class="container">
+
+            <div ng-repeat="stream in streamsContainer.streams">
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail" ng-click="config.stream = stream">
+                        <img ng-src="{{stream.preview.medium}}" style="height: 200px; width: 100%; display: block;">
+                        <div class="caption">
+                            <h4>{{stream.channel.display_name}}</h4>
+                            <p>{{stream.channel.status}}</p>
+                            <p style="margin-bottom: 0; color: #d9534f;">{{stream.viewers}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="($index+1)%3 == 0" class="clearfix"></div>
+            </div>
+
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/ng-template" id="video.tmp">
+        <object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{config.stream.channel.name}}" bgcolor="#000000">
+            <param name="allowFullScreen" value="true" />
+            <param name="allowScriptAccess" value="always" />
+            <param name="allowNetworking" value="all" />
+            <param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" />
+            <param name="flashvars" value="hostname=www.twitch.tv&channel={{config.stream.channel.name}}&auto_play=true&start_volume={{startvolume}}" />
+        </object>
+    </script>
+    </body>
+</html>
