@@ -91,5 +91,5 @@ function streamList(Twitch, SteamApi, $scope, $interval, GameSelector) {
     };
     $scope.streamsContainer = Twitch.getStreams();
     $scope.gamesContainer = SteamApi.getGames();
-    $interval(function () { Twitch.updateStreams(); SteamApi.updateGames(); }, 5 * 1000);
+    $interval(function () { Twitch.updateStreams(); SteamApi.updateGames(); }, 60 * 1000);
 }
