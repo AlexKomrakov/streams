@@ -9,7 +9,10 @@ streamsApp
     .controller('streamList', streamList)
     .directive('stream', Stream);
 
-function Config($httpProvider) {
+function Config($httpProvider, $interpolateProvider) {
+    $interpolateProvider.startSymbol('[[');
+    $interpolateProvider.endSymbol(']]');
+
     //Enable cross domain calls
     $httpProvider.defaults.useXDomain = true;
 
