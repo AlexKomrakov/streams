@@ -15,7 +15,10 @@ var r *render.Render
 var serverAddress string
 
 func init() {
-    r = render.New()
+    r = render.New(render.Options{
+        Extensions: []string{".tmpl", ".html"}, // Specify extensions to load for templates.
+        IsDevelopment: true, // Render will now recompile the templates on every HTML response.
+    })
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
