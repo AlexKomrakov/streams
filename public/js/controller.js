@@ -1,4 +1,4 @@
-var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate']);
+var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate', 'ngRoute']);
 
 streamsApp
     .config(Config)
@@ -9,15 +9,23 @@ streamsApp
     .controller('streamList', streamList)
     .directive('stream', Stream);
 
-function Config($httpProvider, $interpolateProvider) {
+function Config($interpolateProvider, $routeProvider, $locationProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
-
-    //Enable cross domain calls
-    $httpProvider.defaults.useXDomain = true;
-
-    //Remove the header used to identify ajax call  that would prevent CORS from working
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
+    $routeProvider
+        .when('/:game', {
+                controller: streamList,
+                templateUrl: 'template.html'
+            })
+        .when('/', {
+                controller: streamList,
+                templateUrl: 'template.html'
+            })
+        .otherwise({ redirectTo: '/' });
 }
 
 function Empty() {
@@ -35,10 +43,13 @@ function Empty() {
 function GameSelector($rootScope) {
     var GameSelector = this;
     var gameList     = [ "Counter-Strike: Global Offensive", "Dota 2" ];
-    var game         = { id: "Dota 2" };
+    var game         = { id: "" };
     GameSelector.getGameList = function() { return gameList; };
     GameSelector.getGame     = function() { return game; };
     GameSelector.selectGame  = function(game_id) {
+        if (gameList.indexOf(game_id) == -1) {
+            game_id = gameList[0];
+        }
         game.id = game_id;
         $rootScope.$broadcast("changeGame");
     }
@@ -85,9 +96,10 @@ function Stream() {
     }
 }
 
-function streamList(Twitch, SteamApi, $scope, $interval, GameSelector) {
+function streamList(Twitch, SteamApi, $scope, $interval, GameSelector, $routeParams) {
+    GameSelector.selectGame($routeParams.game);
     $scope.games = GameSelector.getGameList();
-    $scope.changeGame = GameSelector.selectGame;
+    $scope.activeGame = GameSelector.getGame();
     $scope.config = {
         stream: '',
         startvolume: '50'

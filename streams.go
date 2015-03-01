@@ -30,7 +30,7 @@ func main() {
     flag.Parse()
 
     router := mux.NewRouter()
-    router.HandleFunc("/", Index).Methods("GET")
+    router.NotFoundHandler = http.HandlerFunc(Index)
 
     n := negroni.Classic()
     n.UseHandler(router)
