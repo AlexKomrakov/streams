@@ -7,6 +7,7 @@ streamsApp
     .service('SteamApi', SteamApi)
     .service('GameSelector', GameSelector)
     .controller('streamList', streamList)
+    .controller('routeController', routeController)
     .directive('stream', Stream);
 
 function Config($interpolateProvider, $routeProvider, $locationProvider) {
@@ -17,14 +18,8 @@ function Config($interpolateProvider, $routeProvider, $locationProvider) {
         requireBase: false
     });
     $routeProvider
-        .when('/:game', {
-                controller: streamList,
-                templateUrl: 'template.html'
-            })
-        .when('/', {
-                controller: streamList,
-                templateUrl: 'template.html'
-            })
+        .when('/:game', { controller: routeController, template: ' ' })
+        .when('/', { controller: routeController, template: ' ' })
         .otherwise({ redirectTo: '/' });
 }
 
@@ -96,8 +91,7 @@ function Stream() {
     }
 }
 
-function streamList(Twitch, SteamApi, $scope, $interval, GameSelector, $routeParams) {
-    GameSelector.selectGame($routeParams.game);
+function streamList(Twitch, SteamApi, $scope, $interval, GameSelector) {
     $scope.games = GameSelector.getGameList();
     $scope.activeGame = GameSelector.getGame();
     $scope.config = {
@@ -107,4 +101,19 @@ function streamList(Twitch, SteamApi, $scope, $interval, GameSelector, $routePar
     $scope.streamsContainer = Twitch.getStreams();
     $scope.gamesContainer = SteamApi.getGames();
     $interval(function () { Twitch.updateStreams(); SteamApi.updateGames(); }, 60 * 1000);
+}
+
+function routeController($routeParams, GameSelector) {
+    //console.log("1");
+    //
+    //var init = function () {
+    //    console.log("1");
+    //    if ($routeParams.ticketId) {
+    //        $scope.ticketSelected($routeParams.ticketId);
+    //    }
+    //};
+    //
+    //// fire on controller loaded
+    //init();
+    GameSelector.selectGame($routeParams.game);
 }

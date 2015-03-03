@@ -28,9 +28,8 @@
         <script src="/js/holder.js"></script>
     </head>
 
-    <body ng-app="dotaStreams">
+    <body ng-app="dotaStreams" ng-controller="streamList">
 
-        <script type="text/ng-template" id="template.html">
             <div class="bs-docs-featurette" style="background-color: #000">
                 <div class="container">
                     <stream ng-if="config.stream != ''" config="config" style="display: block; height: 670px;"></stream>
@@ -80,7 +79,6 @@
 
                 </div>
             </div>
-        </script>
 
         <ng-view></ng-view>
 
