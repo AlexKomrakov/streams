@@ -63,10 +63,7 @@ function Twitch($rootScope, $resource, GameSelector) {
             if ('streams' in result && (typeof result.streams[0] != 'undefined')) data.streams = result.streams;
         });
     };
-    this.getStreams = function() {
-        Twitch.updateStreams();
-        return data;
-    };
+    this.getStreams = function() { return data; };
 }
 
 function SteamApi($resource) {
@@ -104,16 +101,5 @@ function streamList(Twitch, SteamApi, $scope, $interval, GameSelector) {
 }
 
 function routeController($routeParams, GameSelector) {
-    //console.log("1");
-    //
-    //var init = function () {
-    //    console.log("1");
-    //    if ($routeParams.ticketId) {
-    //        $scope.ticketSelected($routeParams.ticketId);
-    //    }
-    //};
-    //
-    //// fire on controller loaded
-    //init();
     GameSelector.selectGame($routeParams.game);
 }
