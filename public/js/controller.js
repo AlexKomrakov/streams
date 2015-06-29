@@ -17,8 +17,8 @@ function Config($interpolateProvider, $routeProvider, $locationProvider) {
         requireBase: false
     });
     $routeProvider
-        .when('/:game', { controller: routeController, template: ' ' })
-        .when('/', { controller: routeController, template: ' ' })
+        .when('/:game', { controller: routeController, template: ' ', reloadOnSearch: false })
+        .when('/', { controller: routeController, template: ' ', reloadOnSearch: false })
         .otherwise({ redirectTo: '/' });
 }
 
