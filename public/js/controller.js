@@ -4,7 +4,6 @@ streamsApp
     .config(Config)
     .filter('empty', Empty)
     .service('Twitch', Twitch)
-    .service('SteamApi', SteamApi)
     .service('GameSelector', GameSelector)
     .controller('streamList', streamList)
     .controller('routeController', routeController)
@@ -37,14 +36,9 @@ function Empty() {
 
 function GameSelector($rootScope) {
     var GameSelector = this;
-    var gameList     = [ "Counter-Strike: Global Offensive", "Dota 2" ];
-    var game         = { id: "" };
-    GameSelector.getGameList = function() { return gameList; };
+    var game = { id: "" };
     GameSelector.getGame     = function() { return game; };
     GameSelector.selectGame  = function(game_id) {
-        if (gameList.indexOf(game_id) == -1) {
-            game_id = gameList[0];
-        }
         game.id = game_id;
         $rootScope.$broadcast("changeGame");
     }
@@ -52,30 +46,44 @@ function GameSelector($rootScope) {
 
 function Twitch($rootScope, $resource, GameSelector) {
     var Twitch = this;
-    var data = { streams: [] };
+    var data = { streams: [], games: [] };
     var game = GameSelector.getGame();
     var TwitchAPI = $resource('https://api.twitch.tv/kraken/streams', {}, {
-        get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK'}}
+        get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK'}},
+        games: {url: "https://api.twitch.tv/kraken/games/top", method: 'JSONP', params: {callback: 'JSON_CALLBACK'}}
     });
-    $rootScope.$on('changeGame', function(){ Twitch.updateStreams(); });
+    $rootScope.$on('changeGame', function(){
+        data.streams = [];
+        Twitch.updateStreams();
+    });
     this.updateStreams = function() {
+        $rootScope.$broadcast('loadingStreams', true);
         TwitchAPI.get({game: game.id}).$promise.then(function (result) {
-            if ('streams' in result && (typeof result.streams[0] != 'undefined')) data.streams = result.streams;
+            if ('streams' in result && (typeof result.streams[0] != 'undefined'))  {
+                angular.forEach(result.streams, function(value, key) {
+                    if (data.streams[key] && data.streams[key]._id == value._id) {
+                        data.streams[key].viewers = value.viewers;
+                    } else {
+                        data.streams[key] = value;
+                    }
+                });
+            }
+            $rootScope.$broadcast('loadingStreams', false);
         });
     };
     this.getStreams = function() { return data; };
-}
-
-function SteamApi($resource) {
-    var SteamApi = $resource('/live.php');
-    var data = { games: [] };
-    this.updateGames = function() {
-        SteamApi.get().$promise.then(function(response){
-            if ('result' in response) data.games = response.result.games;
-        })
-    };
     this.getGames = function() {
-        this.updateGames();
+        TwitchAPI.games().$promise.then(function(response) {
+            if ('top' in response) {
+                angular.forEach(response.top, function(value, key) {
+                    if (data.games[key] && data.games[key].game.name == value.game.name) {
+                        data.games[key].viewers = value.viewers;
+                    } else {
+                        data.games[key] = value;
+                    }
+                });
+            }
+        });
         return data;
     };
 }
@@ -87,20 +95,28 @@ function Stream() {
     }
 }
 
-function streamList(Twitch, SteamApi, $scope, $interval, $location, GameSelector) {
-    $scope.games = GameSelector.getGameList();
+function streamList($rootScope, Twitch, $scope, $interval, $location, GameSelector) {
+    $rootScope.$on('loadingStreams', function(event, status) {
+        $scope.loadingStreams = status;
+    });
+    $scope.games = Twitch.getGames();
     $scope.activeGame = GameSelector.getGame();
     $scope.config = {
         stream: $location.search().channel,
         startvolume: '50'
     };
     $scope.streamsContainer = Twitch.getStreams();
-    $scope.gamesContainer = SteamApi.getGames();
-    $interval(function () { Twitch.updateStreams(); SteamApi.updateGames(); }, 60 * 1000);
+    $interval(function () {
+        Twitch.updateStreams();
+        Twitch.getGames();
+    }, 60* 1000);
     $scope.changeStream = function(stream) {
         $scope.config.stream = stream;
         $location.search('channel', stream);
-    }
+    };
+    $scope.changeGame = function(game) {
+        $location.path('/' + game);
+    };
 }
 
 function routeController($routeParams, GameSelector) {
