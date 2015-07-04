@@ -39,6 +39,7 @@ function GameSelector($rootScope) {
     var game = { id: "" };
     GameSelector.getGame     = function() { return game; };
     GameSelector.selectGame  = function(game_id) {
+        game_id = game_id ? game_id : "";
         game.id = game_id;
         $rootScope.$broadcast("changeGame");
     }
