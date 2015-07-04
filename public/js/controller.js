@@ -115,10 +115,10 @@ function streamList($rootScope, Twitch, $scope, $interval, $location, GameSelect
         $location.search('channel', stream);
     };
     $scope.changeGame = function(game) {
-        $location.path('/' + game);
+        $location.path('/' + encodeURIComponent(game));
     };
 }
 
 function routeController($routeParams, GameSelector) {
-    GameSelector.selectGame($routeParams.game);
+    GameSelector.selectGame(decodeURIComponent($routeParams.game));
 }
