@@ -17,8 +17,8 @@ function Config($interpolateProvider, $routeProvider, $locationProvider) {
         requireBase: false
     });
     $routeProvider
-        .when('/:game', { controller: routeController, template: ' ', reloadOnSearch: false })
-        .when('/', { controller: routeController, template: ' ', reloadOnSearch: false })
+        .when('/:game', { controller: routeController, template: ' ' })
+        .when('/', { controller: routeController, template: ' ' })
         .otherwise({ redirectTo: '/' });
 }
 
@@ -95,14 +95,14 @@ function Stream() {
     }
 }
 
-function streamList($rootScope, Twitch, $scope, $interval, $location, GameSelector) {
+function streamList($routeParams, $rootScope, Twitch, $scope, $interval, GameSelector) {
     $rootScope.$on('loadingStreams', function(event, status) {
         $scope.loadingStreams = status;
     });
     $scope.games = Twitch.getGames();
     $scope.activeGame = GameSelector.getGame();
     $scope.config = {
-        stream: $location.search().channel,
+        stream: $routeParams.channel,
         startvolume: '50'
     };
     $scope.streamsContainer = Twitch.getStreams();
@@ -110,16 +110,13 @@ function streamList($rootScope, Twitch, $scope, $interval, $location, GameSelect
         Twitch.updateStreams();
         Twitch.getGames();
     }, 60* 1000);
-    $scope.changeStream = function(stream) {
-        $scope.config.stream = stream;
-        $location.search('channel', stream);
-    };
-    $scope.changeGame = function(game) {
-        $location.path('/' + encodeURIComponent(game));
-    };
 }
 
-function routeController($routeParams, GameSelector) {
-    var game = $routeParams.game ? decodeURIComponent($routeParams.game) : "";
-    GameSelector.selectGame(game);
+function routeController($scope, $routeParams, GameSelector) {
+    $scope.$on('$routeChangeSuccess', function () {
+        $scope.config.stream = $routeParams.channel;
+        if (GameSelector.getGame().id != $routeParams.game) {
+            GameSelector.selectGame($routeParams.game);
+        }
+    });
 }

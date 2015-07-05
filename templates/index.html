@@ -62,12 +62,12 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li ng-class="activeGame.id ? '' : 'active'">
-                            <a class="navbar-brand" ng-click="changeGame('')">
+                            <a class="navbar-brand" href="/[[config.stream ? '?channel=' + config.stream : '']]">
                                 <img class="animated bounceIn" height="20" style="vertical-align: baseline" src="/icons/apple-icon-180x180.png">
                             </a>
                         </li>
                         <li ng-class="activeGame.id == game.game.name ? 'active' : ''" ng-repeat="game in games.games">
-                            <a class="animated fadeIn" ng-click="changeGame(game.game.name)" style="cursor: pointer">
+                            <a class="animated fadeIn" href="/[[game.game.name]][[config.stream ? '?channel=' + config.stream : '']]" style="cursor: pointer">
                                 [[ game.game.name ]]
                                 <sup>[[ game.viewers ]]</sup>
                             </a>
@@ -88,8 +88,10 @@
                 </div>
                 <div ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams">
                     <div class="col-sm-6 col-md-4 animated fadeInUp">
-                        <div class="thumbnail" style="border: none;" ng-click="changeStream(stream.channel.name)">
-                            <img ng-src="[[stream.preview.medium]]" style="height: 200px; width: 100%; display: block;">
+                        <div class="thumbnail" style="border: none;">
+                            <a href="/[[activeGame.id]]?channel=[[stream.channel.name]]">
+                                <img ng-src="[[stream.preview.medium]]" style="height: 200px; width: 100%; display: block;">
+                            </a>
                             <div class="caption" ng-class="stream.channel.name == config.stream ? 'bg-info' : ''">
                                 <h4 style="margin-bottom: 5px;">[[stream.channel.display_name]]</h4>
                                 <p class="small">[[stream.channel.status]]</p>
