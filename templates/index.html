@@ -67,7 +67,7 @@
                             </a>
                         </li>
                         <li ng-class="activeGame.id == game.game.name ? 'active' : ''" ng-repeat="game in games.games">
-                            <a class="animated fadeIn" href="/[[game.game.name]][[config.stream ? '?channel=' + config.stream : '']]" style="cursor: pointer">
+                            <a class="animated fadeIn" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]" style="cursor: pointer">
                                 [[ game.game.name ]]
                                 <sup>[[ game.viewers ]]</sup>
                             </a>
@@ -89,7 +89,7 @@
                 <div ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams">
                     <div class="col-sm-6 col-md-4 animated fadeInUp">
                         <div class="thumbnail" style="border: none;">
-                            <a href="/[[activeGame.id]]?channel=[[stream.channel.name]]">
+                            <a href="/[[activeGame.id | urlEncode]]?channel=[[stream.channel.name]]">
                                 <img ng-src="[[stream.preview.medium]]" style="height: 200px; width: 100%; display: block;">
                             </a>
                             <div class="caption" ng-class="stream.channel.name == config.stream ? 'bg-info' : ''">

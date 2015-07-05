@@ -3,6 +3,7 @@ var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngA
 streamsApp
     .config(Config)
     .filter('empty', Empty)
+    .filter('urlEncode', urlEncode)
     .service('Twitch', Twitch)
     .service('GameSelector', GameSelector)
     .controller('streamList', streamList)
@@ -34,9 +35,15 @@ function Empty() {
     }
 }
 
+function urlEncode() {
+    return function(url) {
+        return encodeURIComponent(encodeURIComponent(url));
+    }
+}
+
 function GameSelector($rootScope) {
     var GameSelector = this;
-    var game = { id: "" };
+    var game = { id: null };
     GameSelector.getGame     = function() { return game; };
     GameSelector.selectGame  = function(game_id) {
         game.id = game_id;
@@ -115,6 +122,7 @@ function streamList($routeParams, $rootScope, Twitch, $scope, $interval, GameSel
 function routeController($scope, $routeParams, GameSelector) {
     $scope.$on('$routeChangeSuccess', function () {
         $scope.config.stream = $routeParams.channel;
+        $routeParams.game = $routeParams.game ? decodeURIComponent($routeParams.game) : '';
         if (GameSelector.getGame().id != $routeParams.game) {
             GameSelector.selectGame($routeParams.game);
         }
