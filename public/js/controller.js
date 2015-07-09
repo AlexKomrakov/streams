@@ -3,8 +3,8 @@ var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngA
 streamsApp
     .config(Config)
     .filter('empty', Empty)
+    .filter('urlEncode', urlEncode)
     .service('Twitch', Twitch)
-    .service('SteamApi', SteamApi)
     .service('GameSelector', GameSelector)
     .controller('streamList', streamList)
     .controller('routeController', routeController)
@@ -35,16 +35,17 @@ function Empty() {
     }
 }
 
+function urlEncode() {
+    return function(url) {
+        return encodeURIComponent(encodeURIComponent(url));
+    }
+}
+
 function GameSelector($rootScope) {
     var GameSelector = this;
-    var gameList     = [ "Counter-Strike: Global Offensive", "Dota 2" ];
-    var game         = { id: "" };
-    GameSelector.getGameList = function() { return gameList; };
+    var game = { id: null };
     GameSelector.getGame     = function() { return game; };
     GameSelector.selectGame  = function(game_id) {
-        if (gameList.indexOf(game_id) == -1) {
-            game_id = gameList[0];
-        }
         game.id = game_id;
         $rootScope.$broadcast("changeGame");
     }
@@ -52,33 +53,44 @@ function GameSelector($rootScope) {
 
 function Twitch($rootScope, $resource, GameSelector) {
     var Twitch = this;
-    var data = { streams: [] };
+    var data = { streams: [], games: [] };
     var game = GameSelector.getGame();
     var TwitchAPI = $resource('https://api.twitch.tv/kraken/streams', {}, {
-        get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK'}}
+        get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK'}},
+        games: {url: "https://api.twitch.tv/kraken/games/top", method: 'JSONP', params: {callback: 'JSON_CALLBACK'}}
     });
-    $rootScope.$on('changeGame', function(){ Twitch.updateStreams(); });
+    $rootScope.$on('changeGame', function(){
+        data.streams = [];
+        Twitch.updateStreams();
+    });
     this.updateStreams = function() {
+        $rootScope.$broadcast('loadingStreams', true);
         TwitchAPI.get({game: game.id}).$promise.then(function (result) {
-            if ('streams' in result && (typeof result.streams[0] != 'undefined')) data.streams = result.streams;
+            if ('streams' in result && (typeof result.streams[0] != 'undefined'))  {
+                angular.forEach(result.streams, function(value, key) {
+                    if (data.streams[key] && data.streams[key]._id == value._id) {
+                        data.streams[key].viewers = value.viewers;
+                    } else {
+                        data.streams[key] = value;
+                    }
+                });
+            }
+            $rootScope.$broadcast('loadingStreams', false);
         });
     };
-    this.getStreams = function() {
-        Twitch.updateStreams();
-        return data;
-    };
-}
-
-function SteamApi($resource) {
-    var SteamApi = $resource('/live.php');
-    var data = { games: [] };
-    this.updateGames = function() {
-        SteamApi.get().$promise.then(function(response){
-            if ('result' in response) data.games = response.result.games;
-        })
-    };
+    this.getStreams = function() { return data; };
     this.getGames = function() {
-        this.updateGames();
+        TwitchAPI.games().$promise.then(function(response) {
+            if ('top' in response) {
+                angular.forEach(response.top, function(value, key) {
+                    if (data.games[key] && data.games[key].game.name == value.game.name) {
+                        data.games[key].viewers = value.viewers;
+                    } else {
+                        data.games[key] = value;
+                    }
+                });
+            }
+        });
         return data;
     };
 }
@@ -86,34 +98,33 @@ function SteamApi($resource) {
 function Stream() {
     return {
         restrict: 'E',
-        scope: { config: '=config' },
-        template: '<object type="application/x-shockwave-flash" height="670" width="1140" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{config.stream.channel.name}}" bgcolor="#000000"><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={{config.stream.channel.name}}&auto_play=true&start_volume={{startvolume}}"/></object>'
+        templateUrl: 'video.tmp'
     }
 }
 
-function streamList(Twitch, SteamApi, $scope, $interval, GameSelector) {
-    $scope.games = GameSelector.getGameList();
+function streamList($routeParams, $rootScope, Twitch, $scope, $interval, GameSelector) {
+    $rootScope.$on('loadingStreams', function(event, status) {
+        $scope.loadingStreams = status;
+    });
+    $scope.games = Twitch.getGames();
     $scope.activeGame = GameSelector.getGame();
     $scope.config = {
-        stream: '',
+        stream: $routeParams.channel,
         startvolume: '50'
     };
     $scope.streamsContainer = Twitch.getStreams();
-    $scope.gamesContainer = SteamApi.getGames();
-    $interval(function () { Twitch.updateStreams(); SteamApi.updateGames(); }, 60 * 1000);
+    $interval(function () {
+        Twitch.updateStreams();
+        Twitch.getGames();
+    }, 60* 1000);
 }
 
-function routeController($routeParams, GameSelector) {
-    //console.log("1");
-    //
-    //var init = function () {
-    //    console.log("1");
-    //    if ($routeParams.ticketId) {
-    //        $scope.ticketSelected($routeParams.ticketId);
-    //    }
-    //};
-    //
-    //// fire on controller loaded
-    //init();
-    GameSelector.selectGame($routeParams.game);
+function routeController($scope, $routeParams, GameSelector) {
+    $scope.$on('$routeChangeSuccess', function () {
+        $scope.config.stream = $routeParams.channel;
+        $routeParams.game = $routeParams.game ? decodeURIComponent($routeParams.game) : '';
+        if (GameSelector.getGame().id != $routeParams.game) {
+            GameSelector.selectGame($routeParams.game);
+        }
+    });
 }
