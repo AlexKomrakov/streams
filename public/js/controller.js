@@ -70,6 +70,7 @@ function Twitch($rootScope, $resource, GameSelector) {
                 angular.forEach(result.streams, function(value, key) {
                     if (data.streams[key] && data.streams[key]._id == value._id) {
                         data.streams[key].viewers = value.viewers;
+                        data.streams[key].preview = value.preview;
                     } else {
                         data.streams[key] = value;
                     }
