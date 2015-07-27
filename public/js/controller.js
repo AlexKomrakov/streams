@@ -1,4 +1,4 @@
-var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate', 'ngRoute']);
+var streamsApp = angular.module('dotaStreams', ['ngResource', 'ngSanitize', 'ngAnimate', 'ngRoute', 'ngStorage']);
 
 streamsApp
     .config(Config)
@@ -102,7 +102,10 @@ function Stream() {
     }
 }
 
-function streamList($routeParams, $rootScope, Twitch, $scope, $interval, GameSelector) {
+function streamList($routeParams, $rootScope, $localStorage, Twitch, $scope, $interval, GameSelector) {
+    $scope.$storage = $localStorage.$default({
+        favorite_streams: []
+    });
     $rootScope.$on('loadingStreams', function(event, status) {
         $scope.loadingStreams = status;
     });
@@ -117,6 +120,22 @@ function streamList($routeParams, $rootScope, Twitch, $scope, $interval, GameSel
         Twitch.updateStreams();
         Twitch.getGames();
     }, 60* 1000);
+
+    $scope.favorite = function (stream) {
+        if ($scope.$storage.favorite_streams.indexOf(stream.channel.name) == -1) {
+            return stream.viewers;
+        } else {
+            return Number.MAX_VALUE;
+        }
+    };
+    $scope.like = function(game) {
+        var index = $scope.$storage.favorite_streams.indexOf(game);
+        if (index == -1) {
+            $scope.$storage.favorite_streams.push(game);
+        } else {
+            $scope.$storage.favorite_streams.splice(index, 1);
+        }
+    };
 }
 
 function routeController($scope, $routeParams, GameSelector) {
