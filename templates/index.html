@@ -95,6 +95,7 @@
                             </a>
                             <div class="caption" ng-class="stream.channel.name == config.stream ? 'bg-info' : ''">
                                 <h4 style="margin-bottom: 5px;">[[stream.channel.display_name]]</h4>
+                                <p class="text-info" ng-show="activeGame.id | empty">[[stream.game]]</p>
                                 <p class="small">[[stream.channel.status]]</p>
                                 <p style="margin-bottom: 0; color: #d9534f;">[[stream.viewers]]</p>
                             </div>

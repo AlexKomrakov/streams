@@ -69,8 +69,7 @@ function Twitch($rootScope, $resource, GameSelector) {
             if ('streams' in result && (typeof result.streams[0] != 'undefined'))  {
                 angular.forEach(result.streams, function(value, key) {
                     if (data.streams[key] && data.streams[key]._id == value._id) {
-                        data.streams[key].viewers = value.viewers;
-                        data.streams[key].preview = value.preview;
+                        angular.extend(data.streams[key], value);
                     } else {
                         data.streams[key] = value;
                     }
@@ -85,7 +84,7 @@ function Twitch($rootScope, $resource, GameSelector) {
             if ('top' in response) {
                 angular.forEach(response.top, function(value, key) {
                     if (data.games[key] && data.games[key].game.name == value.game.name) {
-                        data.games[key].viewers = value.viewers;
+                        angular.extend(data.games[key], value);
                     } else {
                         data.games[key] = value;
                     }
