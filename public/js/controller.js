@@ -125,7 +125,7 @@ function streamList($routeParams, $rootScope, $localStorage, Twitch, $scope, $in
         if ($scope.$storage.favorite_streams.indexOf(stream.channel.name) == -1) {
             return stream.viewers;
         } else {
-            return Number.MAX_VALUE;
+            return 1000000 + stream.viewers;
         }
     };
     $scope.like = function(game) {
