@@ -55,7 +55,7 @@ function Twitch($rootScope, $resource, GameSelector) {
     var Twitch = this;
     var data = { streams: [], games: [] };
     var game = GameSelector.getGame();
-    var TwitchAPI = $resource('https://api.twitch.tv/kraken/streams', {}, {
+    Twitch.Api = $resource('https://api.twitch.tv/kraken/streams', {}, {
         get: {method: 'JSONP', params: {callback: 'JSON_CALLBACK'}},
         games: {url: "https://api.twitch.tv/kraken/games/top", method: 'JSONP', params: {callback: 'JSON_CALLBACK'}}
     });
@@ -63,9 +63,9 @@ function Twitch($rootScope, $resource, GameSelector) {
         data.streams = [];
         Twitch.updateStreams();
     });
-    this.updateStreams = function() {
+    Twitch.updateStreams = function() {
         $rootScope.$broadcast('loadingStreams', true);
-        TwitchAPI.get({game: game.id}).$promise.then(function (result) {
+        Twitch.Api.get({game: game.id}).$promise.then(function (result) {
             if ('streams' in result && (typeof result.streams[0] != 'undefined'))  {
                 angular.forEach(result.streams, function(value, key) {
                     if (data.streams[key] && data.streams[key]._id == value._id) {
@@ -78,10 +78,11 @@ function Twitch($rootScope, $resource, GameSelector) {
             $rootScope.$broadcast('loadingStreams', false);
         });
     };
-    this.getStreams = function() { return data; };
-    this.getGames = function() {
-        TwitchAPI.games().$promise.then(function(response) {
+    Twitch.getStreams = function() { return data; };
+    Twitch.getGames = function() {
+        Twitch.Api.games().$promise.then(function(response) {
             if ('top' in response) {
+                response.top = response.top.splice(0, 10);
                 angular.forEach(response.top, function(value, key) {
                     if (data.games[key] && data.games[key].game.name == value.game.name) {
                         angular.extend(data.games[key], value);
