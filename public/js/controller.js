@@ -103,7 +103,7 @@ function Stream() {
     }
 }
 
-function streamList($routeParams, $rootScope, $localStorage, Twitch, $scope, $interval, GameSelector) {
+function streamList($routeParams, $rootScope, $sce, $localStorage, Twitch, $scope, $interval, GameSelector) {
     $scope.$storage = $localStorage.$default({
         favorite_streams: []
     });
@@ -116,6 +116,9 @@ function streamList($routeParams, $rootScope, $localStorage, Twitch, $scope, $in
         stream: $routeParams.channel,
         startvolume: '50'
     };
+    $scope.trustSrc = function(src) {
+        return $sce.trustAsResourceUrl(src);
+    }
     $scope.streamsContainer = Twitch.getStreams();
     $interval(function () {
         Twitch.updateStreams();
