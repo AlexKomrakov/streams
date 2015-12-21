@@ -1,0 +1,22 @@
+{
+  "name": "streams",
+  "homepage": "https://github.com/alexkomrakov/streams",
+  "authors": [
+    "AlexKomrakov <a.komrakov@smart-crowd.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.4.8",
+    "uikit": "~2.24.3"
+  }
+}
