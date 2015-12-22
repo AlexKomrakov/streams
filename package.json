@@ -7,7 +7,9 @@
     "bower": "^1.7.1",
     "del": "^2.2.0",
     "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0"
+    "gulp-concat": "^2.6.0",
+    "gulp-less": "^3.0.5",
+    "gulp-livereload": "^3.8.1"
   },
   "devDependencies": {},
   "scripts": {
