@@ -1,101 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Game streams</title>
+    <meta name="description" content="Most popular twitch.tv game streams on one page">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/js/all.js"></script>
     <link href="/css/all.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css">
+
+    {{ template "favicon" }}
+    {{ template "google_analytics" }}
+    {{ template "yandex_metrika" }}
 </head>
-<body>
-
-<nav class="uk-navbar">
-    <ul class="uk-navbar-nav uk-hidden-small">
-        <li>
-            <a href="">Test</a>
-        </li>
-    </ul>
-    <a href="#my-id" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-</nav>
-<div id="my-id" class="uk-offcanvas">
-    <div class="uk-offcanvas-bar">
-        <ul class="uk-nav uk-nav-offcanvas">
-            <li class="uk-active">
-                <a href="">Test</a>
-            </li>
+<body ng-app="streamsApp" ng-controller="StreamsCtrl">
+    <nav class="uk-navbar">
+        <ul class="uk-navbar-nav uk-hidden-small">
+            {{ template "navbar" }}
         </ul>
-    </div>
-</div>
-
-<div class="uk-block uk-contrast uk-block-secondary">qw</div>
-
-
-<div class="uk-grid">
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        <a href="#my-id" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
+    </nav>
+    <div id="my-id" class="uk-offcanvas">
+        <div class="uk-offcanvas-bar">
+            <ul class="uk-nav uk-nav-offcanvas">
+                {{ template "navbar" }}
+            </ul>
         </div>
     </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
+    <div class="uk-block uk-contrast uk-block-secondary">
+        <stream ng-if="config.stream"></stream>
+    </div>
+    <div class="uk-grid">
+        <div ng-if="loadingStreams && !streamsContainer.streams[0]">
+            <span class="animated fadeIn">
+                <i class="fa fa-cog fa-spin"></i>
+            </span>
+        </div>
+        <div class="uk-width-large-1-4 uk-width-medium-1-2 animated fadeIn" ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams | orderBy:favorite:true">
+            <div class="uk-panel uk-panel-box uk-margin-top" ng-class="stream.channel.name == config.stream ? 'uk-panel-box-primary' : ''">
+                <a href="/[[activeGame.id | urlEncode]]?channel=[[stream.channel.name]]">
+                    <div class="uk-panel-teaser">
+                        <img ng-src="[[stream.preview.medium]]" width="800" height="280" alt="">
+                    </div>
+                </a>
+                <p>[[stream.channel.display_name]]</p>
+                <p ng-show="activeGame.id | empty">[[stream.game]]</p>
+                <p>[[stream.channel.status]]</p>
+                <p ng-click="like(stream.channel.name)">
+                    <i class="fa" ng-class="($storage.favorite_streams | filter:stream.channel.name:true).length ? 'fa-heart' : 'fa-heart-o'"></i>
+                </p>
+                <p>
+                    <i class="fa fa-eye"></i>
+                    [[stream.viewers]]
+                </p>
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
         </div>
     </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-    <div class="uk-width-large-1-5">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-panel-teaser">
-                <img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_beyondthesummit-320x180.jpg" width="800" height="280" alt="">
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-        </div>
-    </div>
-</div>
-
-<!--{-]]{ template "index_old" }}-->
+    <ng-view></ng-view>
+    <script type="text/ng-template" id="stream.tmp">
+        <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]" frameborder="0" scrolling="no" height="640" width="100%" allowfullscreen></iframe>
+    </script>
 </body>
 </html>

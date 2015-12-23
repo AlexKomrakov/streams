@@ -1,0 +1,15 @@
+<li ng-class="activeGame.id ? '' : 'uk-active'">
+    <a href="/[[config.stream ? '?channel=' + config.stream : '']]">
+        All
+        <!--<img src="/icons/apple-icon-180x180.png">-->
+    </a>
+</li>
+<li ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
+    <a class="uk-navbar-nav-subtitle" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]">
+        [[ game.game.name ]]
+        <div>
+            <i class="fa fa-eye"></i>
+            [[ game.viewers ]]
+        </div>
+    </a>
+</li>
