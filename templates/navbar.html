@@ -5,7 +5,7 @@
     </a>
 </li>
 <li class="animated fadeInDown" ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
-    <a class="uk-navbar-nav-subtitle" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]">
+    <a class="uk-navbar-nav-subtitle" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]" onclick="UIkit.offcanvas.hide()">
         [[ game.game.name ]]
         <div>
             <i class="fa fa-eye"></i>
