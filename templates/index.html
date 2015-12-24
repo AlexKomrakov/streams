@@ -16,7 +16,7 @@
     {{ template "yandex_metrika" }}
 </head>
 <body ng-app="streamsApp" ng-controller="StreamsCtrl">
-    <nav class="uk-navbar">
+    <nav class="uk-navbar streams-navbar">
         <ul class="uk-navbar-nav uk-hidden-small">
             {{ template "navbar" }}
         </ul>
@@ -29,38 +29,40 @@
             </ul>
         </div>
     </div>
-    <div class="uk-block uk-contrast uk-block-secondary">
-        <stream ng-if="config.stream"></stream>
-    </div>
-    <div class="uk-grid">
-        <div ng-if="loadingStreams && !streamsContainer.streams[0]">
+
+    <stream ng-if="config.stream"></stream>
+
+    <div class="streams-container uk-grid">
+        <div class="uk-margin-top" ng-if="loadingStreams && !streamsContainer.streams[0]">
             <span class="animated fadeIn">
-                <i class="fa fa-cog fa-spin"></i>
+                <i class="uk-icon-refresh uk-icon-spin"></i> 
             </span>
         </div>
-        <div class="uk-width-large-1-4 uk-width-medium-1-2 animated fadeIn" ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams | orderBy:favorite:true">
-            <div class="uk-panel uk-panel-box uk-margin-top" ng-class="stream.channel.name == config.stream ? 'uk-panel-box-primary' : ''">
+        <div class="uk-width-large-1-4 uk-width-medium-1-2 animated fadeInUp" ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams | orderBy:favorite:true">
+            <div class="uk-panel uk-margin-top">
                 <a href="/[[activeGame.id | urlEncode]]?channel=[[stream.channel.name]]">
-                    <div class="uk-panel-teaser">
+                    <div class="uk-panel-teaser uk-margin-bottom-remove">
                         <img ng-src="[[stream.preview.medium]]" width="800" height="280" alt="">
                     </div>
                 </a>
-                <p>[[stream.channel.display_name]]</p>
-                <p ng-show="activeGame.id | empty">[[stream.game]]</p>
-                <p>[[stream.channel.status]]</p>
-                <p ng-click="like(stream.channel.name)">
-                    <i class="fa" ng-class="($storage.favorite_streams | filter:stream.channel.name:true).length ? 'fa-heart' : 'fa-heart-o'"></i>
-                </p>
-                <p>
-                    <i class="fa fa-eye"></i>
-                    [[stream.viewers]]
-                </p>
+                <div class="uk-panel-box" ng-class="stream.channel.name == config.stream ? 'uk-panel-box-primary' : ''">
+                    <h4 class="uk-margin-bottom-remove">[[stream.channel.display_name]]</h4>
+                    <div class="uk-text-primary uk-margin-top-remove" ng-show="activeGame.id | empty">[[stream.game]]</div>
+                    <div><small>[[stream.channel.status]]</small></div>
+                    <p class="uk-margin-bottom-remove">
+                        <i class="fa fa-eye"></i>
+                        [[stream.viewers | numberFormat:0:"":" "]]
+                        <i class="fa uk-text-warning uk-align-right uk-margin-bottom-remove" ng-click="like(stream.channel.name)" ng-class="($storage.favorite_streams | filter:stream.channel.name:true).length ? 'fa-star' : 'fa-star-o'"></i>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
     <ng-view></ng-view>
     <script type="text/ng-template" id="stream.tmp">
-        <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]" frameborder="0" scrolling="no" height="640" width="100%" allowfullscreen></iframe>
+        <div class="uk-block uk-contrast uk-block-secondary">
+            <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]" frameborder="0" scrolling="no" height="640" width="100%" allowfullscreen></iframe>
+        </div>
     </script>
 </body>
 </html>

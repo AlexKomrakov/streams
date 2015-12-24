@@ -1,15 +1,15 @@
-<li ng-class="activeGame.id ? '' : 'uk-active'">
+<li class="animated fadeIn" ng-class="activeGame.id ? '' : 'uk-active'">
     <a href="/[[config.stream ? '?channel=' + config.stream : '']]">
-        All
-        <!--<img src="/icons/apple-icon-180x180.png">-->
+        <img class="navbar-logo uk-responsive-height" src="/icons/apple-icon-180x180.png">
+        Popular
     </a>
 </li>
-<li ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
+<li class="animated fadeInDown" ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
     <a class="uk-navbar-nav-subtitle" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]">
         [[ game.game.name ]]
         <div>
             <i class="fa fa-eye"></i>
-            [[ game.viewers ]]
+            [[ game.viewers | numberFormat:0:"":" " ]]
         </div>
     </a>
 </li>

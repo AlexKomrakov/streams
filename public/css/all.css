@@ -1292,14 +1292,14 @@ iframe {
  * Sub-modifier: `uk-panel-box-primary`
  */
 .uk-panel-box-primary {
-  background-color: #ebf7fd;
-  color: #2d7091;
+  background-color: #fff0eb;
+  color: #444;
 }
 .uk-panel-box-primary-hover:hover {
-  color: #2d7091;
+  color: #444;
 }
 .uk-panel-box-primary .uk-panel-title {
-  color: #2d7091;
+  color: #e04006;
 }
 /*
  * Sub-modifier: `uk-panel-box-secondary`
@@ -7488,7 +7488,7 @@ a.uk-thumbnail:focus {
   color: #999 !important;
 }
 .uk-text-primary {
-  color: #2d7091 !important;
+  color: #e04006 !important;
 }
 .uk-text-success {
   color: #659f13 !important;
@@ -8577,4 +8577,20 @@ a.uk-thumbnail:focus {
   h3 {
     page-break-after: avoid;
   }
+}
+html {
+  overflow-y: scroll;
+}
+.streams-container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.streams-navbar {
+  padding: 15px;
+}
+.navbar-logo {
+  width: 30px;
+}
+[ng-click] {
+  cursor: pointer;
 }
