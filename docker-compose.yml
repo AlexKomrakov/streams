@@ -1,0 +1,20 @@
+golang:
+  image: golang:1.6
+  working_dir: /go/src/streams
+  command: bash -c 'go get ./... && go build && streams'
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/go/src/streams
+
+###
+# sudo docker-compose run node npm install
+# sudo docker-compose run node bower install --allow-root
+# sudo docker-compose run node gulp
+# sudo docker-compose run node gulp watch
+###
+node:
+  image: neo9polska/nodejs-bower-gulp
+  command: npm link gulp
+  volumes:
+        - .:/app
