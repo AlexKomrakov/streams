@@ -68,24 +68,24 @@ func main() {
     flag.StringVar(&serverAddress, "a", "0.0.0.0:8000", "Server address: host:port")
     flag.Parse()
 
-    c = elastigo.NewConn()
-    // Set the Elasticsearch Host to Connect to
-    c.Domain = "elasticsearch"
-    c.Port   = "9200"
-
-    ticker := time.NewTicker(1 * time.Hour)
-    quit := make(chan struct{})
-    go func() {
-        for {
-            select {
-            case <- ticker.C:
-                SaveTop(c)
-            case <- quit:
-                ticker.Stop()
-                return
-            }
-        }
-    }()
+    //c = elastigo.NewConn()
+    //// Set the Elasticsearch Host to Connect to
+    //c.Domain = "elasticsearch"
+    //c.Port   = "9200"
+    //
+    //ticker := time.NewTicker(1 * time.Hour)
+    //quit := make(chan struct{})
+    //go func() {
+    //    for {
+    //        select {
+    //        case <- ticker.C:
+    //            SaveTop(c)
+    //        case <- quit:
+    //            ticker.Stop()
+    //            return
+    //        }
+    //    }
+    //}()
 
     router := mux.NewRouter()
     router.NotFoundHandler = http.HandlerFunc(Index)
