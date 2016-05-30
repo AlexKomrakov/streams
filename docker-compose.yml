@@ -1,7 +1,7 @@
 golang:
   image: golang:1.6
   working_dir: /go/src/streams
-  command: bash -c 'go get ./... && go run streams.go'
+  command: bash -c 'go get ./... && go build && streams'
   ports:
     - "8000:8000"
   volumes:
@@ -27,8 +27,8 @@ golang:
 # sudo docker-compose run node gulp
 # sudo docker-compose run node gulp watch
 ###
-node:
-  image: neo9polska/nodejs-bower-gulp
-  command: npm link gulp
-  volumes:
-        - .:/app
+#node:
+#  image: neo9polska/nodejs-bower-gulp
+#  command: npm link gulp
+#  volumes:
+#        - .:/app
