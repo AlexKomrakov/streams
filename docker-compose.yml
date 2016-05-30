@@ -14,7 +14,7 @@ elasticsearch:
   ports:
     - "9200:9200"
   environment:
-    - ES_HEAP_SIZE=256m
+    - ES_HEAP_SIZE=128m
     - ES_MIN_MEM=128m
     - ES_MAX_MEM=128m
   volumes:
