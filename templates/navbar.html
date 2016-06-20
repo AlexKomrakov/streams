@@ -1,15 +1,5 @@
-<li class="animated fadeIn" ng-class="activeGame.id ? '' : 'uk-active'">
-    <a href="/[[config.stream ? '?channel=' + config.stream : '']]">
-        <img class="navbar-logo uk-responsive-height" src="/icons/apple-icon-180x180.png">
-        Popular
-    </a>
-</li>
-<li class="animated fadeInDown" ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
-    <a class="uk-navbar-nav-subtitle" href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]" onclick="UIkit.offcanvas.hide()">
-        [[ game.game.name ]]
-        <div>
-            <i class="fa fa-eye"></i>
-            [[ game.viewers | numberFormat:0:"":" " ]]
-        </div>
-    </a>
+<li class="animated fadeIn">
+    <img class="navbar-logo uk-responsive-height" src="/icons/apple-icon-180x180.png">
+    Game streams
+    <i class="uk-icon-refresh uk-icon-spin" ng-if="loadingStreams && !streamsContainer.streams[0]"></i>
 </li>
