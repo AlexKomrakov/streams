@@ -31,7 +31,6 @@
     </div>
 
     <stream ng-if="config.stream"></stream>
-
     <div class="uk-grid" style="margin: 60px 0 45px 15px;">
         <div class="uk-width-large-1-10 uk-width-medium-1-5 uk-margin-top uk-padding-remove animated fadeInLeft" ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
             <a href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]" style="color: #444">
@@ -39,8 +38,10 @@
             <div class="uk-margin-bottom">
                 [[ game.game.name ]]
                 <br>
-                <i class="fa fa-eye"></i>
-                [[ game.viewers | numberFormat:0:"":" " ]]
+                <small>
+                    <i class="fa fa-eye"></i>
+                    [[ game.viewers | numberFormat:0:"":" " ]]
+                </small>
             </div>
             </a>
         </div>
@@ -70,12 +71,29 @@
     </div>
     <ng-view></ng-view>
     <script type="text/ng-template" id="stream.tmp">
-        <div class="uk-contrast uk-block-secondary" style="position: relative;">
-            <a href="/[[activeGame.id | urlEncode]]" style="z-index: 9999; background-color: #000; height: 60px; width: 70px; position: absolute; right: 0; bottom: 0;">
-                <i class="fa fa-times" style="color: white; padding: 22px 0 0 22px;"></i>
-            </a>
-            <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]" frameborder="0" scrolling="no" height="640" width="100%" allowfullscreen></iframe>
-        </div>
+        <div class="uk-contrast uk-block-secondary" style="position: relative; display: table; width: 100%;">
+            <div style="display: table-cell; position: relative;">
+                <div style="z-index: 9999; background-color: #000; height: 60px; width: 70px; position: absolute; right: 0; bottom: 0;">
+                    <a href="/[[activeGame.id | urlEncode]]"><i class="fa fa-times" style="color: white; padding: 22px 0 0 5px;"></i></a>
+                    <i class="fa fa-comments" style="color: white; padding: 22px 0 0 10px;" ng-click="showChat = !showChat"></i>
+                </div>
+                <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]"
+                        frameborder="0"
+                        scrolling="no"
+                        height="640"
+                        width="100%"
+                        allowfullscreen>
+                </iframe>
+            </div>
+            <div style="display: table-cell; width: 300px;" ng-if="showChat">
+                <iframe ng-src="[[ trustSrc('http://www.twitch.tv/' + config.stream + '/chat') ]]"
+                        frameborder="0"
+                        scrolling="no"
+                        id="chat_embed"
+                        height="640"
+                        width="100%">
+                </iframe>
+            </div>
     </script>
 </body>
 </html>
