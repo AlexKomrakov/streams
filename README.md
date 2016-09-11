@@ -1,3 +1,2 @@
-streams
-=======
-Repository for game streams single page application http://gamestreams.tk/
+# Streams
+All twitch.tv strems in one single page application

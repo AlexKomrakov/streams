@@ -1,6 +1,3 @@
-/.idea
-/node_modules
-/bower_components
-/elasticsearch/data
-!.gitignore
-streams
+.idea
+node_modules
+bower_components

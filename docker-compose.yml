@@ -1,34 +1,8 @@
 golang:
   image: golang:1.6
-  working_dir: /go/src/streams
-  command: bash -c 'go get ./... && go build && streams'
+  working_dir: /go/src/project
+  command: bash -c 'go get ./... && go build && project'
   ports:
     - "8000:8000"
   volumes:
-    - .:/go/src/streams
-#  links:
-#    - elasticsearch
-#elasticsearch:
-#  image: elasticsearch:2.2.2
-#  command: elasticsearch
-#  ports:
-#    - "9200:9200"
-#  environment:
-#    - ES_HEAP_SIZE=128m
-#    - ES_MIN_MEM=128m
-#    - ES_MAX_MEM=128m
-#  volumes:
-#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-#      - ./elasticsearch/data:/usr/share/elasticsearch/data
-#      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
-###
-# sudo docker-compose run node npm install
-# sudo docker-compose run node bower install --allow-root
-# sudo docker-compose run node gulp
-# sudo docker-compose run node gulp watch
-###
-#node:
-#  image: neo9polska/nodejs-bower-gulp
-#  command: npm link gulp
-#  volumes:
-#        - .:/app
+    - .:/go/src/project

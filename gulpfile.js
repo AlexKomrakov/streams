@@ -1,75 +1,37 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var less = require('gulp-less');
-var browserSync = require('browser-sync').create();
-var del = require('del');
+var config       = require('./gulp.config.json');
+var gulp         = require('gulp');
+var browserSync  = require('browser-sync');
+var sass         = require('gulp-sass');
+var concat       = require('gulp-concat');
+var postcss      = require('gulp-postcss');
+var autoprefixer = require('autoprefixer');
+var postcssFlexbugsFixes = require('postcss-flexbugs-fixes');
 
-var paths = {
-    scripts: [
-        'bower_components/angular/angular.min.js',
-        'bower_components/angular-resource/angular-resource.min.js',
-        'bower_components/angular-route/angular-route.min.js',
-        'bower_components/angular-sanitize/angular-sanitize.min.js',
-        'bower_components/ngstorage/ngStorage.min.js',
-        'bower_components/jquery/dist/jquery.min.js',
-        'bower_components/uikit/js/uikit.min.js',
-        'bower_components/uikit/js/core/**/*.min.js',
-        'app/scripts/**/app.js',
-        'app/scripts/**/*.js'
-    ],
-    styles: [
-        'app/less/app.less'
-    ],
-    views: [
-        'templates/**/*'
-    ],
-    fonts: [
-        'bower_components/uikit/fonts/**/*'
-    ]
-};
-
-gulp.task('clean', function () {
-    return del(['build']);
+gulp.task('sass', ['copy-bower-files'], function() {
+    return gulp.src(config.styles.files)
+        .pipe(postcss([ autoprefixer({ browsers: ['last 2 versions'] }), postcssFlexbugsFixes ]))
+        .pipe(sass())
+        .pipe(gulp.dest(config.styles.dest));
 });
 
-gulp.task('fonts', function () {
-    gulp.src(paths.fonts)
-        .pipe(gulp.dest('public/fonts'));
+gulp.task('scripts', function () {
+    return gulp.src(config.scripts.files)
+        .pipe(concat(config.scripts.filename))
+        .pipe(gulp.dest(config.scripts.dest));
 });
 
-gulp.task('views', function () {
-    gulp.src(paths.views);
+gulp.task('copy-bower-files', function () {
+    return gulp.src(config.bower.files)
+        .pipe(gulp.dest(config.bower.dest));
 });
 
-gulp.task('styles', function () {
-    gulp.src(paths.styles)
-        .pipe(less())
-        .pipe(concat('all.css'))
-        .pipe(gulp.dest('public/css'));
+gulp.task('browser-sync', function() {
+    browserSync.init(config.browsersync);
 });
 
-gulp.task('scripts', ['clean'], function () {
-    return gulp.src(paths.scripts)
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('public/js'));
+gulp.task('watch', function() {
+    gulp.watch(config.styles.files , ['sass']);
+    gulp.watch(config.scripts.files, ['scripts']);
 });
 
-gulp.task('watch', function () {
-
-    browserSync.init({
-        proxy           : "localhost:8000",
-        logPrefix       : "BrowserSync",
-        logConnections  : false,
-        reloadOnRestart : false,
-        notify          : false,
-        open            : false,
-        tunnel: true
-    });
-
-    gulp.watch(paths.scripts, ['scripts', 'styles', 'views']).on("change", browserSync.reload);
-    gulp.watch(paths.styles, ['scripts', 'styles', 'views']).on("change", browserSync.reload);
-    gulp.watch(paths.views, ['scripts', 'styles', 'views']).on("change", browserSync.reload);
-});
-
-// The default task (called when you run `gulp` from cli)
-gulp.task('default', ['scripts', 'styles', 'fonts']);
+gulp.task('default', ['sass' , 'scripts']);
