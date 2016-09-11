@@ -13,9 +13,14 @@
   "scripts": {
     "files": [
       "./bower_components/jquery/dist/jquery.js",
+      "./bower_components/tether/dist/js/tether.min.js",
       "./bower_components/bootstrap/dist/js/bootstrap.js",
       "./bower_components/angular/angular.js",
       "./bower_components/angular-resource/angular-resource.js",
+      "./bower_components/angular-route/angular-route.js",
+      "./bower_components/angular-sanitize/angular-sanitize.js",
+      "./bower_components/angular-cookies/angular-cookies.js",
+      "./bower_components/ngStorage/dist/angularLocalStorage.min.js",
       "./assets/js/**/*.*",
       "./assets/js/app.js"
     ],
@@ -24,8 +29,7 @@
   },
   "bower": {
     "files": [
-      "./bower_components/**/*.*"
     ],
-    "dest": "./public/js"
+    "dest": "./public/js/vendor"
   }
 }

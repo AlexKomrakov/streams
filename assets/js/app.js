@@ -12,8 +12,7 @@ angular
     .module('streamsApp', [
         'ngRoute',
         'ngSanitize',
-        'ngResource',
-        'ngStorage'
+        'ngResource'
     ])
     .config(function ($locationProvider, $interpolateProvider, $routeProvider) {
         $interpolateProvider.startSymbol('[[');
