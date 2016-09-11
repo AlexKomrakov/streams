@@ -19,6 +19,14 @@
 <header class="gs-navbar">
     <div class="stripe-left"></div>
     <b class="m-l-1 logo">Streams</b>
+    <div class="animated fadeIn" ng-show="loadingStreams && !streamsContainer.streams[0]">
+        <div class="spinner m-t-1">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
 </header>
 <div class="layout-body" ng-cloak>
     <stream ng-if="config.stream" class="w-100"></stream>

@@ -48514,22 +48514,6 @@ angular.module('streamsApp')
 'use strict';
 
 /**
- * @ngdoc directive
- * @name streamsApp.directive:stream
- * @description
- * # stream
- */
-angular.module('streamsApp')
-    .directive('stream', function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'stream.tmp'
-        };
-    });
-
-'use strict';
-
-/**
  * @ngdoc filter
  * @name streamsApp.filter:empty
  * @function
@@ -48693,5 +48677,21 @@ angular.module('streamsApp')
                 }
             });
             return data;
+        };
+    });
+
+'use strict';
+
+/**
+ * @ngdoc directive
+ * @name streamsApp.directive:stream
+ * @description
+ * # stream
+ */
+angular.module('streamsApp')
+    .directive('stream', function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'stream.tmp'
         };
     });

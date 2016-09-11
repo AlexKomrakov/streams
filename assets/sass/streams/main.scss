@@ -75,3 +75,28 @@ h4 {
 [ng-click] {
   cursor: pointer;
 }
+
+.spinner {
+  position: absolute;
+  right: 60px;
+  top: 14px;
+}
+
+.line {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 4px;
+  background: $color-orange;
+  animation: spin 1.5s infinite ease;
+
+  &:nth-of-type(2) { animation-delay: 0.1s; }
+  &:nth-of-type(3) { animation-delay: 0.2s; }
+  &:nth-of-type(4) { animation-delay: 0.3s; }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
