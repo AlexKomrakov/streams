@@ -1,17 +1,19 @@
 {
-  "name": "streams",
-  "version": "0.0.0",
+  "name": "git-stats",
+  "authors": [
+    "alexkomrakov <alexkomrakov@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
   "dependencies": {
-    "angular": "^1.4.0",
-    "angular-resource": "^1.4.0",
-    "angular-route": "^1.4.0",
-    "angular-sanitize": "^1.4.0",
-    "uikit": "~2.24.3",
-    "ngstorage": "~0.3.10"
-  },
-  "devDependencies": {
-    "angular-mocks": "^1.4.0"
-  },
-  "appPath": "app",
-  "moduleName": "streamsApp"
+    "bootstrap": "v4.0.0-alpha.3",
+    "angular": "1.5.*",
+    "angular-resource": "1.5.*",
+    "angular-route": "1.5.*",
+    "angular-sanitize": "1.5.*",
+    "angular-cookies": "1.5.*",
+    "ngStorage": "*"
+  }
 }

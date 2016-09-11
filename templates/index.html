@@ -5,8 +5,8 @@
     <meta name="description" content="Most popular twitch.tv game streams on one page">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/js/all.js"></script>
-    <link href="/css/all.css" rel="stylesheet">
+    <script src="/js/app/app.js"></script>
+    <link href="/css/app.css" rel="stylesheet">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css">
@@ -16,84 +16,100 @@
     {{ template "yandex_metrika" }}
 </head>
 <body ng-app="streamsApp" ng-controller="StreamsCtrl">
-    <nav class="uk-navbar streams-navbar">
-        <ul class="uk-navbar-nav uk-hidden-small">
-            {{ template "navbar" }}
-        </ul>
-        <a href="#my-id" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-    </nav>
-    <div id="my-id" class="uk-offcanvas">
-        <div class="uk-offcanvas-bar">
-            <ul class="uk-nav uk-nav-offcanvas">
-                {{ template "navbar" }}
-            </ul>
+<header class="gs-navbar">
+    <div class="stripe-left"></div>
+    <b class="m-l-1 logo">Streams</b>
+    <div class="animated fadeIn" ng-show="loadingStreams && !streamsContainer.streams[0]">
+        <div class="spinner m-t-1">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
         </div>
     </div>
-
-    <stream ng-if="config.stream"></stream>
-    <div class="uk-grid" style="margin: 60px 0 45px 15px;">
-        <div class="uk-width-large-1-10 uk-width-medium-1-5 uk-margin-top uk-padding-remove animated fadeInLeft" ng-class="activeGame.id == game.game.name ? 'uk-active' : ''" ng-repeat="game in games.games">
-            <a href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]" style="color: #444">
-            <img ng-src="[[game.game.box.medium]]" width="100px" style="margin-bottom: 10px;"/>
-            <div class="uk-margin-bottom">
-                [[ game.game.name ]]
-                <br>
-                <small>
-                    <i class="fa fa-eye"></i>
-                    [[ game.viewers | numberFormat:0:"":" " ]]
-                </small>
+</header>
+<div class="layout-body" ng-cloak>
+    <stream ng-if="config.stream" class="w-100"></stream>
+    <div class="games-container">
+        <a class="game" href="/[[config.stream ? '?channel=' + config.stream : '']]">
+            <div class="game-image" style="margin-bottom: 10px;">
             </div>
-            </a>
-        </div>
+            <small>All games</small>
+        </a>
+        <a class="game" ng-repeat="game in games.games"
+           href="/[[game.game.name | urlEncode]][[config.stream ? '?channel=' + config.stream : '']]">
+            <img ng-src="[[game.game.box.medium]]" class="game-image"/>
+            <div style="background-color: #E04006; color: #fff; font-size: 10px; text-align: center; padding: 4px; margin-bottom: 10px;">
+                <i class="fa fa-eye"></i>
+                [[ game.viewers | numberFormat:0:"":" " ]]
+            </div>
+            <small>[[ game.game.name ]]</small>
+        </a>
     </div>
-
-    <h2 class="uk-margin-left">[[activeGame.id]]</h2>
-    <div class="uk-grid uk-margin-remove" style="padding-right: 15px; min-height: 1000px;">
-        <div style="padding-left: 15px;" class="uk-width-large-1-6 uk-width-medium-1-4 animated fadeInUp" ng-if="streamsContainer.streams[0] != null" ng-repeat="stream in streamsContainer.streams | orderBy:favorite:true">
-            <div class="uk-panel uk-margin-top">
-                <a href="/[[activeGame.id | urlEncode]]?channel=[[stream.channel.name]]">
-                    <div class="uk-panel-teaser uk-margin-bottom-remove">
-                        <img ng-src="[[stream.preview.medium]]" width="800" height="280" alt="">
-                    </div>
+    <div class="text-xs-center w-100" style="margin-top: 40px;">
+        <h4 class="text-uppercase text-muted">[[ activeGame.id || 'All game streams' ]]</h4>
+    </div>
+    <div class="games-container">
+        <div class="animated fadeInUp"
+             ng-if="streamsContainer.streams[0] != null"
+             ng-repeat="stream in streamsContainer.streams | orderBy:favorite:true"
+             style="width: 240px; margin: 20px;">
+            <div>
+                <a href="/[[activeGame.id | urlEncode]]?channel=[[stream.channel.name]]" style="margin-bottom: 10px; display: block;">
+                    <img ng-src="[[stream.preview.medium]]" width="240px" alt="">
                 </a>
-                <div class="uk-panel-box" ng-class="stream.channel.name == config.stream ? 'uk-panel-box-primary' : ''">
-                    <h4 class="uk-margin-bottom-remove">[[stream.channel.display_name]]</h4>
-                    <div class="uk-text-primary uk-margin-top-remove" ng-show="activeGame.id | empty">[[stream.game]]</div>
-                    <div><small>[[stream.channel.status]]</small></div>
-                    <p class="uk-margin-bottom-remove">
-                        <i class="fa fa-eye"></i>
-                        [[stream.viewers | numberFormat:0:"":" "]]
-                        <i class="fa uk-text-warning uk-align-right uk-margin-bottom-remove" ng-click="like(stream.channel.name)" ng-class="($storage.favorite_streams | filter:stream.channel.name:true).length ? 'fa-star' : 'fa-star-o'"></i>
-                    </p>
+                <div>
+                    <h5>[[stream.channel.display_name]]</h5>
+                    <div class="text-muted">
+                        <div ng-show="activeGame.id | empty" style="color: #E04006; margin-bottom: 5px;">
+                            [[stream.game]]
+                        </div>
+                        <div>
+                            <small>[[stream.channel.status]]</small>
+                        </div>
+                        <small style="padding-top: 10px; display: block;">
+                            <i class="fa fa-eye"></i>
+                            [[stream.viewers | numberFormat:0:"":" "]]
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <ng-view></ng-view>
-    <script type="text/ng-template" id="stream.tmp">
-        <div class="uk-contrast uk-block-secondary" style="position: relative; display: table; width: 100%;">
-            <div style="display: table-cell; position: relative;">
-                <div style="z-index: 9999; background-color: #000; height: 60px; width: 70px; position: absolute; right: 0; bottom: 0;">
-                    <a href="/[[activeGame.id | urlEncode]]"><i class="fa fa-times" style="color: white; padding: 22px 0 0 5px;"></i></a>
-                    <i class="fa fa-comments" style="color: white; padding: 22px 0 0 10px;" ng-click="showChat = !showChat"></i>
-                </div>
-                <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]"
-                        frameborder="0"
-                        scrolling="no"
-                        height="640"
-                        width="100%"
-                        allowfullscreen>
-                </iframe>
+</div>
+<footer class="text-xs-center m-y-1">
+    <small class="text-muted">© {{ .year }}
+        <a href="https://github.com/alexkomrakov" target="_blank">Alex Komrakov</a>
+    </small>
+</footer>
+<script type="text/ng-template" id="stream.tmp">
+    <div style="position: relative; display: table; width: 100%; background-color: #000;">
+        <div style="display: table-cell; position: relative;">
+            <div style="z-index: 9999; background-color: #000; height: 60px; width: 70px; position: absolute; right: 0; bottom: 0;">
+                <a href="/[[activeGame.id | urlEncode]]"><i class="fa fa-times"
+                                                            style="color: white; padding: 22px 0 0 5px;"></i></a>
+                <i class="fa fa-comments" style="color: white; padding: 22px 0 0 10px;"
+                   ng-click="showChat = !showChat"></i>
             </div>
-            <div style="display: table-cell; width: 300px;" ng-if="showChat">
-                <iframe ng-src="[[ trustSrc('http://www.twitch.tv/' + config.stream + '/chat') ]]"
-                        frameborder="0"
-                        scrolling="no"
-                        id="chat_embed"
-                        height="640"
-                        width="100%">
-                </iframe>
-            </div>
-    </script>
+            <iframe ng-src="[[ trustSrc('http://player.twitch.tv/?channel=' + config.stream) ]]"
+                    frameborder="0"
+                    scrolling="no"
+                    height="640"
+                    width="100%"
+                    allowfullscreen>
+            </iframe>
+        </div>
+        <div style="display: table-cell; width: 300px;" ng-if="showChat">
+            <iframe ng-src="[[ trustSrc('http://www.twitch.tv/' + config.stream + '/chat') ]]"
+                    frameborder="0"
+                    scrolling="no"
+                    id="chat_embed"
+                    height="640"
+                    width="100%">
+            </iframe>
+        </div>
+    </div>
+</script>
 </body>
 </html>

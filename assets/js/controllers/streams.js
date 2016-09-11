@@ -8,10 +8,10 @@
  * Controller of the streamsApp
  */
 angular.module('streamsApp')
-    .controller('StreamsCtrl', function ($routeParams, $rootScope, $sce, $localStorage, $scope, $interval, twitch, gameSelector) {
-        $scope.$storage = $localStorage.$default({
+    .controller('StreamsCtrl', function ($routeParams, $rootScope, $sce, $scope, $interval, twitch, gameSelector) {
+        $scope.$storage = {
             favorite_streams: []
-        });
+        };
         $rootScope.$on('loadingStreams', function (event, status) {
             $scope.loadingStreams = status;
         });
